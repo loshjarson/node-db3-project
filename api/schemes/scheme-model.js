@@ -21,7 +21,6 @@ function findById(scheme_id) { // EXERCISE B
     .where('sc.scheme_id', scheme_id)
     .orderBy('st.step_number')
     .then((steps) => {
-      console.log(steps)
       if(steps[0].step_id === null) {
         const schemeSteps = {
           'scheme_id': scheme_id,
