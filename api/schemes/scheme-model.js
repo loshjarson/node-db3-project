@@ -1,4 +1,6 @@
-function find() { // EXERCISE A
+const db = require("../../data/db-config")
+
+function find() {
   return db
     .select('sc.*')
     .count('st.step_id as number_of_steps')
@@ -8,7 +10,7 @@ function find() { // EXERCISE A
     .orderBy('sc.scheme_id')
 }
 
-function findById(scheme_id) { // EXERCISE B
+function findById(scheme_id) {
   const schemeID = Number(scheme_id)
   return db
     .select('sc.scheme_name', 'st.*')
@@ -43,7 +45,7 @@ function findById(scheme_id) { // EXERCISE B
     })
 }
 
-function findSteps(scheme_id) { // EXERCISE C
+function findSteps(scheme_id) {
   return db
     .select('st.step_id','st.step_number','st.instructions','sc.scheme_name')
     .from('schemes as sc')
@@ -59,18 +61,26 @@ function findSteps(scheme_id) { // EXERCISE C
     })
 }
 
-function add(scheme) { // EXERCISE D
-  /*
-    1D- This function creates a new scheme and resolves to _the newly created scheme_.
-  */
+function add(scheme) {
+  return db('schemes')
+    .insert({ scheme_name: scheme.scheme_name })
+    .then(id => {
+      return db('schemes')
+      .where("scheme_id",id)
+      .first()
+    })
 }
 
-function addStep(scheme_id, step) { // EXERCISE E
-  /*
-    1E- This function adds a step to the scheme with the given `scheme_id`
-    and resolves to _all the steps_ belonging to the given `scheme_id`,
-    including the newly created one.
-  */
+function addStep(scheme_id, step) {
+  return db('steps')
+    .insert({
+      step_number: step.step_number,
+      instructions: step.instructions,
+      scheme_id: scheme_id
+    })
+    .then(id => {
+      return findSteps(scheme_id)
+    })
 }
 
 module.exports = {
